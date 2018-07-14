@@ -1,0 +1,51 @@
+<html>
+    <head>
+        <style>
+         * {
+             box-sizing: border-box;
+         }
+
+         body {
+             position: relative;
+             margin: 0;
+             padding: 0;
+             width: 100vw;
+             height: 100vh;
+             overflow: hidden;
+         }
+
+         #background-frame {
+             position: absolute;
+             min-width: 100%;
+             min-height: 100%;
+             top: 50%;
+             left: 50%;
+             transform: translate(-50%, -50%);
+         }
+        </style>
+         <script type="text/javascript" src="whale-shark-skin.js"></script>
+    </head>
+
+    <body>
+        <div id="background-frame"></div>
+
+        <script>
+         var aquas = {
+             cols: 20,
+             line: 'hsl(0, 0%, 80%)',
+             boxColor: [[60, 120], [50, 50], [90, 100]],
+             dotColor: [[150, 210], [80, 80], [50, 50]],
+             dotSize: [20, 50],
+         };
+
+         var greys = {
+             cols: 40,
+             line: 'hsl(0, 0%, 80%)',
+             boxColor: 'hsl(0, 0%, 100%)',
+             dotColor: [[0, 0], [0, 0], [0, 100]],
+             dotSize: [25, 75],
+         };
+         document.getElementById('background-frame').appendChild(Whalesharkskin());
+        </script>
+    </body>
+</html>
