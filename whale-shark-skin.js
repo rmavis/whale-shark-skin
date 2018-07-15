@@ -1,5 +1,5 @@
 /*
- * WhalesharkSkin :: args -> HTMLElement
+ * Whalesharkskin :: args -> HTMLElement
  * args = An object containing any of these key-value pairs:
  *   cols = (int|[int,int]) the number of columns
  *   line = (string|[[int,int]{3}]) the border color
