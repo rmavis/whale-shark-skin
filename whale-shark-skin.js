@@ -1,5 +1,5 @@
 /*
- * Whalesharkskin :: args -> HTMLElement
+ * WhalesharkSkin :: args -> HTMLElement
  * args = An object containing any of these key-value pairs:
  *   cols = (int|[int,int]) the number of columns
  *   line = (string|[[int,int]{3}]) the border color
@@ -39,7 +39,7 @@ function Whalesharkskin(args) {
             line: makeArgMaker(args.line, makeIdentity, makeIdentity('hsl(0, 0%, 50%)')),
             boxColor: makeArgMaker(args.boxColor, makeColorRandomizer, makeIdentity('hsl(0, 0%, 100%)')),
             dotColor: makeArgMaker(args.dotColor, makeColorRandomizer, makeIdentity('hsl(0, 0%, 0%)')),
-            dotSize: makeArgMaker(args.dotSize, makePercentRandomizer, makeIdentity(50)),
+            dotSize: makeArgMaker(args.dotSize, makePercentRandomizer, makeIdentity(50), makePercentIdentity),
         };
     }
 
@@ -160,11 +160,31 @@ function Whalesharkskin(args) {
 
     // makeColorRandomizer :: [[int,int]{3}] -> b -> string
     function makeColorRandomizer(x) {
-        return function (n) {
-            return 'hsl('+
-                getRandomInt(x[0][0], x[0][1])+','+
-                getRandomInt(x[1][0], x[1][1])+'%,'+
-                getRandomInt(x[2][0], x[2][1])+'%)';
+        // The color can be given as a string...
+        if (typeof(x) == 'string') {
+            return function (n) {
+                return x;
+            }
+        }
+
+        if (!(x instanceof Array)) {
+            console.log("ERROR: color must be string or array, given:", x);
+        }
+
+        // ...or as an array. The array can either contain three tuples
+        // or a arbitrary number of strings.
+        if (x[0] instanceof Array) {
+            return function (n) {
+                return 'hsl('+
+                    getRandomInt(x[0][0], x[0][1])+','+
+                    getRandomInt(x[1][0], x[1][1])+'%,'+
+                    getRandomInt(x[2][0], x[2][1])+'%)';
+            }
+        }
+        else {
+            return function (n) {
+                return x[(getRandomInt(0, x.length - 1))];
+            }
         }
     }
 
@@ -182,6 +202,13 @@ function Whalesharkskin(args) {
         };
     }
 
+    // makePercentIdentity :: int -> int -> int
+    function makePercentIdentity(x) {
+        return function (n) {
+            return ((n / 100) * x);
+        }
+    }
+
     // makeIdentity :: a -> b -> a
     function makeIdentity(x) {
         return function (n) {
@@ -190,13 +217,19 @@ function Whalesharkskin(args) {
     }
 
     // makeArgmaker :: (a, (b -> c), (b -> c)) -> (c -> d) -> d
-    function makeArgMaker(arg, maker, alt) {
+    function makeArgMaker(arg, maker, alt, transform) {
         if (arg instanceof Array) {
             return maker(arg);
         }
         else if ((typeof arg == 'string') ||
-                 (typeof arg == 'number'))
-            return makeIdentity(arg);
+                 (typeof arg == 'number')) {
+            if (transform) {
+                return transform(arg);
+            }
+            else {
+                return makeIdentity(arg);
+            }
+        }
         else {
             return alt;
         }
